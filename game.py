@@ -15,6 +15,22 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Starting Template"
 
+class Rectangle:
+
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.height = 10
+        self.width = 50
+        self.color = None
+
+def make_rectangle():
+
+    rec = Rectangle()
+    rec.color = (random.randrange(256), random.randrange(256), random.randrange(256))
+    for i in range(25,SCREEN_WIDTH - 25):
+        pass    
+
 
 class MyGame(arcade.Window):
     """
@@ -54,7 +70,7 @@ class MyGame(arcade.Window):
         #                        Ball
         #---------------------------------------------------------------
         self.ball_list = arcade.SpriteList()
-        self.ball_sprite = arcade.Sprite("meteor.png", 0.5)
+        self.ball_sprite = arcade.Sprite("meteor.png", 0.6)
         self.ball_sprite.center_x = 100
         self.ball_sprite.center_y = 100
         self.ball_list.append(self.ball_sprite)
@@ -82,9 +98,9 @@ class MyGame(arcade.Window):
         self.ball_sprite.center_x += self.dx
         self.ball_sprite.center_y += self.dy
 
-        if self.ball_sprite.center_x < 0 or self.ball_sprite.center_x > SCREEN_WIDTH :
+        if self.ball_sprite.center_x < 5 or self.ball_sprite.center_x > SCREEN_WIDTH - 5 :
             self.dx *= -1
-        if self.ball_sprite.center_y > SCREEN_HEIGHT :
+        if self.ball_sprite.center_y > SCREEN_HEIGHT - 5 :
             self.dy *= -1
         if arcade.check_for_collision(self.player_sprite, self.ball_sprite):
             self.dy *= -1  
