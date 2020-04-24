@@ -11,25 +11,10 @@ import arcade
 import os
 import random
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 700
+RECTANGLE_COUNT = 25
 SCREEN_TITLE = "Starting Template"
-
-class Rectangle:
-
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.height = 10
-        self.width = 50
-        self.color = None
-
-def make_rectangle():
-
-    rec = Rectangle()
-    rec.color = (random.randrange(256), random.randrange(256), random.randrange(256))
-    for i in range(25,SCREEN_WIDTH - 25):
-        pass    
 
 
 class MyGame(arcade.Window):
@@ -49,10 +34,24 @@ class MyGame(arcade.Window):
         self.dx = 3
         self.dy = 3
         #  sprite lists
+
+        #Player-------------------
         self.player_list = None
         self.player_sprite = None
+        #-------------------------
+
+        # Ball--------------------
         self.ball_list = None
         self.ball_sprite = None
+        #-------------------------
+
+        #Rectangles---------------
+        self.blue_rec_list = None
+        self.red_rec_list = None
+        self.lime_rec_list = None
+        self.yellow_rec_list = None
+        self.purple_rec_list = None
+        #--------------------------
 
     def setup(self):
         #  sprites and sprite lists 
@@ -74,7 +73,23 @@ class MyGame(arcade.Window):
         self.ball_sprite.center_x = 100
         self.ball_sprite.center_y = 100
         self.ball_list.append(self.ball_sprite)
-        pass
+
+        #----------------------------------------------------------------
+        #                        Rectangles
+        #----------------------------------------------------------------
+        self.box_rec_list = arcade.SpriteList()
+       
+
+        for i in range(RECTANGLE_COUNT):
+
+            box_rec = arcade.Sprite("boxCrate_double.png",0.5)
+
+            box_rec.center_x = random.randrange(5,SCREEN_WIDTH-5)
+            box_rec.center_y = random.randrange(200,SCREEN_HEIGHT-5)
+
+            self.box_rec_list.append(box_rec)
+            
+
 
     def on_draw(self):
         """
@@ -84,8 +99,13 @@ class MyGame(arcade.Window):
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
         arcade.start_render()
+
         self.player_list.draw()
         self.ball_list.draw()
+
+        self.box_rec_list.draw()
+       
+        
 
         # Call draw() on all your sprite lists below
 
@@ -98,14 +118,29 @@ class MyGame(arcade.Window):
         self.ball_sprite.center_x += self.dx
         self.ball_sprite.center_y += self.dy
 
+        self.box_rec_list.update()
+        
+
+
         if self.ball_sprite.center_x < 5 or self.ball_sprite.center_x > SCREEN_WIDTH - 5 :
             self.dx *= -1
         if self.ball_sprite.center_y > SCREEN_HEIGHT - 5 :
             self.dy *= -1
         if arcade.check_for_collision(self.player_sprite, self.ball_sprite):
             self.dy *= -1  
-        pass
-
+        
+        hit_list_blue = arcade.check_for_collision_with_list(self.ball_sprite, self.box_rec_list)
+        for box_rec in hit_list_blue:
+            if self.ball_sprite.center_y < box_rec.center_y - 1 or self.ball_sprite.center_y > box_rec.center_y + 1 :
+                self.dx *= 1
+                self.dy *= -1
+            else:    
+                self.dx *= -1
+                self.dy *= 1
+            box_rec.remove_from_sprite_lists()
+        
+       
+        
     def on_key_press(self, key, key_modifiers):
         """
         Called whenever a key on the keyboard is pressed.
