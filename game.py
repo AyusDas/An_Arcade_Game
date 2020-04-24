@@ -8,6 +8,8 @@ If Python and Arcade are installed, this example can be run from the command lin
 python -m arcade.examples.starting_template
 """
 import arcade
+import os
+import random
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -27,12 +29,35 @@ class MyGame(arcade.Window):
         super().__init__(width, height, title)
 
         arcade.set_background_color(arcade.color.BLACK)
-
-        # If you have sprite lists, you should create them here,
-        # and set them to None
+        self.set_mouse_visible(False)
+        self.dx = 3
+        self.dy = 3
+        #  sprite lists
+        self.player_list = None
+        self.player_sprite = None
+        self.ball_list = None
+        self.ball_sprite = None
 
     def setup(self):
-        # Create your sprites and sprite lists here
+        #  sprites and sprite lists 
+
+        #--------------------------------------------------------------
+        #                       Player
+        #--------------------------------------------------------------
+        self.player_list = arcade.SpriteList()
+        self.player_sprite = arcade.Sprite("bridgeB.png",0.5)
+        self.player_sprite.center_x = 50
+        self.player_sprite.center_y = 25
+        self.player_list.append(self.player_sprite)
+
+        #---------------------------------------------------------------
+        #                        Ball
+        #---------------------------------------------------------------
+        self.ball_list = arcade.SpriteList()
+        self.ball_sprite = arcade.Sprite("meteor.png", 0.5)
+        self.ball_sprite.center_x = 100
+        self.ball_sprite.center_y = 100
+        self.ball_list.append(self.ball_sprite)
         pass
 
     def on_draw(self):
@@ -43,6 +68,8 @@ class MyGame(arcade.Window):
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
         arcade.start_render()
+        self.player_list.draw()
+        self.ball_list.draw()
 
         # Call draw() on all your sprite lists below
 
@@ -52,6 +79,15 @@ class MyGame(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
+        self.ball_sprite.center_x += self.dx
+        self.ball_sprite.center_y += self.dy
+
+        if self.ball_sprite.center_x < 0 or self.ball_sprite.center_x > SCREEN_WIDTH :
+            self.dx *= -1
+        if self.ball_sprite.center_y > SCREEN_HEIGHT :
+            self.dy *= -1
+        if arcade.check_for_collision(self.player_sprite, self.ball_sprite):
+            self.dy *= -1  
         pass
 
     def on_key_press(self, key, key_modifiers):
@@ -73,6 +109,8 @@ class MyGame(arcade.Window):
         """
         Called whenever the mouse moves.
         """
+        self.player_sprite.center_x = x
+        #self.player_sprite.center_y = SCREEN_HEIGHT - 10
         pass
 
     def on_mouse_press(self, x, y, button, key_modifiers):
@@ -97,4 +135,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
